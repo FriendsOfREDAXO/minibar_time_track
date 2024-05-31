@@ -65,6 +65,6 @@ class MinibarTimeTrack extends rex_minibar_element
 
     public function getOrientation(): string
     {
-        return rex_minibar_element::RIGHT;
+        return rex_minibar_element::LEFT;
     }
 }
