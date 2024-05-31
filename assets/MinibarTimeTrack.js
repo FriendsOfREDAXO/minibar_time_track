@@ -7,7 +7,7 @@
             let startTime;
             let startTimeString;
             let isRunning = false;
-            let inactivityTime = 10 * 1000; // 10 seconds
+            let inactivityTime = 10 * 60 * 1000; // 10 Minutes
             let inactivityTimer;
 
             // Load start time and running state from cookies
