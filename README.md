@@ -1,10 +1,13 @@
-# rex_repo_template
-REDAXO AddOn english readme
+# REDAXO minibar_time_track 
 
-please use in your classes a namespace as
+Mini time tracker for REDAXO minibar. 
 
-```
-namespace FriendsOfRedaxo\[AddOnNameWithoutSpacesAndAsCamelCase]
-```
+Features: 
 
-in order to use non deprecated features please don't use PlugIns anymore
+- Adds a small time tracker to the minibar
+- Pause / Start toggle on time
+- Continues after page reload
+- Continues after browser restart
+- Pause after 10 minutes of inactivity
+- Data can be copied to Clipboard
+- Data can be exported as ical event
