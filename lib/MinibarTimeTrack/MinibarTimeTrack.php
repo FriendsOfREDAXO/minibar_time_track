@@ -49,6 +49,9 @@ class MinibarTimeTrack extends rex_minibar_element
         #minibartimetrack-calendar {
             color: #4CAF50;
         }
+        #minibartimetrack-message {
+        display: none;
+        }
 
             </style>
         <div class="rex-minibar-item">
