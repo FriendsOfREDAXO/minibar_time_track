@@ -7,34 +7,34 @@ document.addEventListener('DOMContentLoaded', (event) => {
     let timer;
     let startTime;
     let startTimeString;
+    let elapsedTime = 0; // Verstrichene Zeit in Sekunden
     let isRunning = false;
     let inactivityTime = 300 * 1000; // 10 seconds
     let inactivityTimer;
 
-    // Load start time and running state from cookies
-    let startTimeCookie = getCookie('timerStartTime');
+    // Load elapsed time and running state from cookies
+    let elapsedTimeCookie = getCookie('timerElapsedTime');
     let startTimeStringCookie = getCookie('timerStartTimeString');
     let isRunningCookie = getCookie('timerIsRunning');
 
-    if (startTimeCookie && startTimeStringCookie) {
-        startTime = parseInt(startTimeCookie, 10);
+    if (elapsedTimeCookie && startTimeStringCookie) {
+        elapsedTime = parseInt(elapsedTimeCookie, 10);
         startTimeString = startTimeStringCookie;
         isRunning = isRunningCookie === 'true';
 
         if (isRunning) {
             startTimer();
         } else {
-            let elapsedTime = Math.floor((Date.now() - startTime) / 1000);
             updateTimerDisplay(elapsedTime);
         }
     }
 
     timerElement.addEventListener('click', () => {
         if (!isRunning) {
-            startTime = Date.now() - (getElapsedTime() * 1000 || 0);
-            startTimeString = new Date(startTime).toLocaleString();
-            setCookie('timerStartTime', startTime, 1);
-            setCookie('timerStartTimeString', startTimeString, 1);
+            if (!startTimeString) {
+                startTimeString = new Date().toLocaleString();
+                setCookie('timerStartTimeString', startTimeString, 1);
+            }
             setCookie('timerIsRunning', 'true', 1);
             startTimer();
         } else {
@@ -48,10 +48,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
         clearInterval(timer);
         timer = null;
         isRunning = false;
-        startTime = Date.now();
-        startTimeString = new Date(startTime).toLocaleString();
+        elapsedTime = 0;
+        startTimeString = new Date().toLocaleString();
         updateTimerDisplay(0);
-        setCookie('timerStartTime', startTime, 1);
+        setCookie('timerElapsedTime', elapsedTime, 1);
         setCookie('timerStartTimeString', startTimeString, 1);
         setCookie('timerIsRunning', 'false', 1);
         hideMessage();
@@ -60,9 +60,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
     copyButton.addEventListener('click', () => {
         let domain = window.location.hostname;
         let currentTime = new Date().toLocaleString();
-        let elapsedTime = formatTime(getElapsedTime());
+        let formattedElapsedTime = formatTime(elapsedTime);
 
-        let copyText = `Domain: ${domain}\nDate and Time: ${currentTime}\nStart Time: ${startTimeString}\nElapsed Time: ${elapsedTime}`;
+        let copyText = `Domain: ${domain}\nDate and Time: ${currentTime}\nStart Time: ${startTimeString}\nElapsed Time: ${formattedElapsedTime}`;
         navigator.clipboard.writeText(copyText).then(() => {
             alert('Information copied to clipboard');
         });
@@ -70,10 +70,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
         clearInterval(timer);
         timer = null;
         isRunning = false;
-        startTime = Date.now();
-        startTimeString = new Date(startTime).toLocaleString();
+        elapsedTime = 0;
+        startTimeString = new Date().toLocaleString();
         updateTimerDisplay(0);
-        setCookie('timerStartTime', startTime, 1);
+        setCookie('timerElapsedTime', elapsedTime, 1);
         setCookie('timerStartTimeString', startTimeString, 1);
         setCookie('timerIsRunning', 'false', 1);
         hideMessage();
@@ -81,16 +81,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     function startTimer() {
         timer = setInterval(() => {
-            let elapsedTime = getElapsedTime();
+            elapsedTime++;
             updateTimerDisplay(elapsedTime);
+            setCookie('timerElapsedTime', elapsedTime, 1);
         }, 1000);
         isRunning = true;
         resetInactivityTimer();
-    }
-
-    function getElapsedTime() {
-        if (!startTime) return 0;
-        return Math.floor((Date.now() - startTime) / 1000);
     }
 
     function updateTimerDisplay(time) {
