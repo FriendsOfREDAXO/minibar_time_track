@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         isRunning = isRunningCookie === 'true';
 
         if (isRunning) {
+            startTime = new Date(startTimeString);
             startTimer();
         } else {
             updateTimerDisplay(elapsedTime);
@@ -34,7 +35,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         if (!isRunning) {
             if (!startTimeString) {
                 startTime = new Date();
-                startTimeString = startTime.toLocaleString();
+                startTimeString = startTime.toISOString();
                 setCookie('timerStartTimeString', startTimeString, 1);
             }
             setCookie('timerIsRunning', 'true', 1);
@@ -52,7 +53,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         isRunning = false;
         elapsedTime = 0;
         startTime = new Date();
-        startTimeString = startTime.toLocaleString();
+        startTimeString = startTime.toISOString();
         updateTimerDisplay(0);
         setCookie('timerElapsedTime', elapsedTime, 1);
         setCookie('timerStartTimeString', startTimeString, 1);
@@ -75,7 +76,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         isRunning = false;
         elapsedTime = 0;
         startTime = new Date();
-        startTimeString = startTime.toLocaleString();
+        startTimeString = startTime.toISOString();
         updateTimerDisplay(0);
         setCookie('timerElapsedTime', elapsedTime, 1);
         setCookie('timerStartTimeString', startTimeString, 1);
@@ -85,12 +86,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     calendarButton.addEventListener('click', () => {
         let domain = window.location.hostname;
-        let currentTime = new Date().toLocaleString();
+        let currentTime = new Date().toISOString();
         let formattedElapsedTime = formatTime(elapsedTime);
 
         let title = `${domain} - Elapsed Time: ${formattedElapsedTime}`;
         let description = `Domain: ${domain}\nDate and Time: ${currentTime}\nStart Time: ${startTimeString}\nElapsed Time: ${formattedElapsedTime}`;
-        let icalData = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//hacksw/handcal//NONSGML v1.0//EN\nBEGIN:VEVENT\nUID:uid1@${domain}\nDTSTAMP:${formatDateToICal(new Date())}\nORGANIZER;CN=Timer App:MAILTO:no-reply@${domain}\nDTSTART:${formatDateToICal(new Date(startTime))}\nDTEND:${formatDateToICal(new Date())}\nSUMMARY:${title}\nDESCRIPTION:${description}\nEND:VEVENT\nEND:VCALENDAR`;
+        let icalData = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//hacksw/handcal//NONSGML v1.0//EN\nBEGIN:VEVENT\nUID:uid1@${domain}\nDTSTAMP:${formatDateToICal(new Date())}\nORGANIZER;CN=Timer App:MAILTO:no-reply@${domain}\nDTSTART:${formatDateToICal(new Date(startTimeString))}\nDTEND:${formatDateToICal(new Date())}\nSUMMARY:${title}\nDESCRIPTION:${description}\nEND:VEVENT\nEND:VCALENDAR`;
         let encodedData = encodeURIComponent(icalData);
 
         let link = document.createElement('a');
@@ -168,7 +169,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 
     function showMessage() {
-        messageElement.style.display = 'block';
+        messageElement.style.display = 'inline-block';
     }
 
     function hideMessage() {
