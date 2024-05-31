@@ -160,4 +160,3 @@ document.addEventListener('DOMContentLoaded', (event) => {
             document.addEventListener('keypress', resetInactivityTimer);
             document.addEventListener('click', resetInactivityTimer);
         });
-    </script>
