@@ -3,11 +3,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
             let resetButton = document.getElementById('minibartimetrack-reset');
             let copyButton = document.getElementById('minibartimetrack-copy');
             let calendarButton = document.getElementById('minibartimetrack-calendar');
+            let messageElement = document.getElementById('minibartimetrack-message');
             let timer;
             let startTime;
             let startTimeString;
             let isRunning = false;
-            let inactivityTime = 10 * 60 * 1000; // 10 Minutes
+            let inactivityTime = 300 * 1000; // 10 seconds
             let inactivityTimer;
 
             // Load start time and running state from cookies
@@ -40,7 +41,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
                     clearInterval(timer);
                     setCookie('timerIsRunning', 'false', 1);
                     isRunning = false;
-                    updateTimerDisplay(getElapsedTime());
                 }
             });
 
@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 setCookie('timerStartTime', startTime, 1);
                 setCookie('timerStartTimeString', startTimeString, 1);
                 setCookie('timerIsRunning', 'false', 1);
+                hideMessage();
             });
 
             copyButton.addEventListener('click', () => {
@@ -75,22 +76,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
                 setCookie('timerStartTime', startTime, 1);
                 setCookie('timerStartTimeString', startTimeString, 1);
                 setCookie('timerIsRunning', 'false', 1);
-            });
-
-            calendarButton.addEventListener('click', () => {
-                let domain = window.location.hostname;
-                let currentTime = new Date().toLocaleString();
-                let elapsedTime = formatTime(getElapsedTime());
-
-                let title = `${domain} - Elapsed Time: ${elapsedTime}`;
-                let description = `Domain: ${domain}\nDate and Time: ${currentTime}\nStart Time: ${startTimeString}\nElapsed Time: ${elapsedTime}`;
-                let icalData = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//hacksw/handcal//NONSGML v1.0//EN\nBEGIN:VEVENT\nUID:uid1@${domain}\nDTSTAMP:${formatDateToICal(new Date())}\nORGANIZER;CN=Timer App:MAILTO:no-reply@${domain}\nDTSTART:${formatDateToICal(new Date(startTime))}\nDTEND:${formatDateToICal(new Date())}\nSUMMARY:${title}\nDESCRIPTION:${description}\nEND:VEVENT\nEND:VCALENDAR`;
-                let encodedData = encodeURIComponent(icalData);
-
-                let link = document.createElement('a');
-                link.href = `data:text/calendar;charset=utf8,${encodedData}`;
-                link.download = 'event.ics';
-                link.click();
+                hideMessage();
             });
 
             function startTimer() {
@@ -128,10 +114,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
                        String(seconds).padStart(2, '0');
             }
 
-            function formatDateToICal(date) {
-                return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-            }
-
             function setCookie(name, value, days) {
                 let expires = "";
                 if (days) {
@@ -160,13 +142,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         clearInterval(timer);
                         setCookie('timerIsRunning', 'false', 1);
                         isRunning = false;
-                        showPausedMessage();
+                        showMessage();
                     }
                 }, inactivityTime);
             }
 
-            function showPausedMessage() {
-                timerElement.innerHTML = 'Paused <i class="fas fa-triangle-exclamation"></i>';
+            function showMessage() {
+                messageElement.style.display = 'block';
+            }
+
+            function hideMessage() {
+                messageElement.style.display = 'none';
             }
 
             // Reset inactivity timer on user interactions
@@ -174,3 +160,4 @@ document.addEventListener('DOMContentLoaded', (event) => {
             document.addEventListener('keypress', resetInactivityTimer);
             document.addEventListener('click', resetInactivityTimer);
         });
+    </script>
