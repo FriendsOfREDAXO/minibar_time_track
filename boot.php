@@ -1,6 +1,6 @@
 <?php 
 
-if (rex::isBackend() && rex::getUser() {  
+if (rex::isBackend() && rex::getUser()) {  
  if (!rex_addon::get('minibar')->isAvailable()) {
             return '';
         }  
