@@ -4,7 +4,7 @@ author: 'Friends Of REDAXO'
 supportpage: https://github.com/FriendsOfREDAXO/addon_key
 requires:
     packages:
-        minibar: '^1.0.0'
+        minibar: '>2.0.0'
     redaxo: '^5.17.1'
     php:
         version: '>=8.1, <9'
