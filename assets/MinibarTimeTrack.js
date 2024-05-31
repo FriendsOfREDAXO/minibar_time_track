@@ -1,4 +1,4 @@
- document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', (event) => {
             let timerElement = document.getElementById('minibartimetrack-timer');
             let resetButton = document.getElementById('minibartimetrack-reset');
             let copyButton = document.getElementById('minibartimetrack-copy');
@@ -40,6 +40,7 @@
                     clearInterval(timer);
                     setCookie('timerIsRunning', 'false', 1);
                     isRunning = false;
+                    updateTimerDisplay(getElapsedTime());
                 }
             });
 
