@@ -53,7 +53,7 @@ class MinibarTimeTrack extends rex_minibar_element
             </style>
         <div class="rex-minibar-item">
         <div class="timer-container rex-minibar-value">
-        <span id="minibartimetrack-timer">00:00:00</span>
+        <span id="minibartimetrack-timer"><span id="minibartimetrack-message">Paused at:</span> 00:00:00</span>
         <button id="minibartimetrack-reset"><i class="fas fa-times"></i></button>
         <button id="minibartimetrack-copy"><i class="fas fa-copy"></i></button>
         <button id="minibartimetrack-calendar"><i class="fas fa-calendar-alt"></i></button>
