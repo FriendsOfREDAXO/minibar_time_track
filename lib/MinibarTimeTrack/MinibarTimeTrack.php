@@ -35,6 +35,7 @@ class MinibarTimeTrack extends rex_minibar_element
         #minibartimetrack-reset, #minibartimetrack-copy, #minibartimetrack-calendar {
             background: none;
             cursor: pointer;
+            border: 0;
         }
 
         #minibartimetrack-reset {
