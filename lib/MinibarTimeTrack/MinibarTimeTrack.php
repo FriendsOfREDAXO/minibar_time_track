@@ -27,37 +27,30 @@ class MinibarTimeTrack extends rex_minibar_element
             text-align: center;
         }
 
-        #timer {
+        #minibartimetrack-timer {
             font-size: 1em;
             cursor: pointer;
         }
 
-        #reset, #copy, #calendar {
+        #minibartimetrack-reset, #minibartimetrack-copy, #minibartimetrack-calendar {
             background: none;
             border: none;
             font-size: 1em;
             cursor: pointer;
         }
 
-        #reset {
+        #minibartimetrack-reset {
             color: #f44336;
         }
 
-        #copy {
+        #minibartimetrack-copy {
             color: #2196F3;
         }
 
-        #calendar {
+        #minibartimetrack-calendar {
             color: #4CAF50;
         }
 
-        #message {
-            color: #f44336;
-            display: none;
-            position: absolute;
-            top: -30px;
-            background: #eee;
-        }
             </style>
         <div class="rex-minibar-item">
         <div class="timer-container rex-minibar-value">
