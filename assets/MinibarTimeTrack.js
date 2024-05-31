@@ -4,38 +4,38 @@ document.addEventListener('DOMContentLoaded', (event) => {
     let copyButton = document.getElementById('minibartimetrack-copy');
     let calendarButton = document.getElementById('minibartimetrack-calendar');
     let messageElement = document.getElementById('minibartimetrack-message');
+
     let timer;
     let startTime;
     let startTimeString;
-    let elapsedTime = 0; // Verstrichene Zeit in Sekunden
     let isRunning = false;
     let inactivityTime = 300 * 1000; // 10 seconds
     let inactivityTimer;
 
-    // Load elapsed time and running state from cookies
-    let elapsedTimeCookie = getCookie('timerElapsedTime');
+    // Load start time and running state from cookies
+    let startTimeCookie = getCookie('timerStartTime');
     let startTimeStringCookie = getCookie('timerStartTimeString');
     let isRunningCookie = getCookie('timerIsRunning');
 
-    if (elapsedTimeCookie && startTimeStringCookie) {
-        elapsedTime = parseInt(elapsedTimeCookie, 10);
+    if (startTimeCookie && startTimeStringCookie) {
+        startTime = parseInt(startTimeCookie, 10);
         startTimeString = startTimeStringCookie;
         isRunning = isRunningCookie === 'true';
 
         if (isRunning) {
             startTimer();
         } else {
+            let elapsedTime = Math.floor((Date.now() - startTime) / 1000);
             updateTimerDisplay(elapsedTime);
         }
     }
 
     timerElement.addEventListener('click', () => {
         if (!isRunning) {
-            if (!startTimeString) {
-                startTime = new Date();
-                startTimeString = startTime.toLocaleString();
-                setCookie('timerStartTimeString', startTimeString, 1);
-            }
+            startTime = Date.now() - (getElapsedTime() * 1000 || 0);
+            startTimeString = new Date(startTime).toLocaleString();
+            setCookie('timerStartTime', startTime, 1);
+            setCookie('timerStartTimeString', startTimeString, 1);
             setCookie('timerIsRunning', 'true', 1);
             startTimer();
         } else {
@@ -49,11 +49,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
         clearInterval(timer);
         timer = null;
         isRunning = false;
-        elapsedTime = 0;
-        startTime = new Date();
-        startTimeString = startTime.toLocaleString();
+        startTime = Date.now();
+        startTimeString = new Date(startTime).toLocaleString();
         updateTimerDisplay(0);
-        setCookie('timerElapsedTime', elapsedTime, 1);
+        setCookie('timerStartTime', startTime, 1);
         setCookie('timerStartTimeString', startTimeString, 1);
         setCookie('timerIsRunning', 'false', 1);
         hideMessage();
@@ -62,9 +61,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
     copyButton.addEventListener('click', () => {
         let domain = window.location.hostname;
         let currentTime = new Date().toLocaleString();
-        let formattedElapsedTime = formatTime(elapsedTime);
+        let elapsedTime = formatTime(getElapsedTime());
 
-        let copyText = `Domain: ${domain}\nDate and Time: ${currentTime}\nStart Time: ${startTimeString}\nElapsed Time: ${formattedElapsedTime}`;
+        let copyText = `Domain: ${domain}\nDate and Time: ${currentTime}\nStart Time: ${startTimeString}\nElapsed Time: ${elapsedTime}`;
         navigator.clipboard.writeText(copyText).then(() => {
             alert('Information copied to clipboard');
         });
@@ -72,49 +71,43 @@ document.addEventListener('DOMContentLoaded', (event) => {
         clearInterval(timer);
         timer = null;
         isRunning = false;
-        elapsedTime = 0;
-        startTime = new Date();
-        startTimeString = startTime.toLocaleString();
+        startTime = Date.now();
+        startTimeString = new Date(startTime).toLocaleString();
         updateTimerDisplay(0);
-        setCookie('timerElapsedTime', elapsedTime, 1);
+        setCookie('timerStartTime', startTime, 1);
         setCookie('timerStartTimeString', startTimeString, 1);
         setCookie('timerIsRunning', 'false', 1);
         hideMessage();
     });
 
     calendarButton.addEventListener('click', () => {
-        let startDate = new Date(startTime);
-        let endDate = new Date(startTime.getTime() + elapsedTime * 1000);
-        let formattedStartDate = startDate.toISOString().replace(/-|:|\.\d+/g, '');
-        let formattedEndDate = endDate.toISOString().replace(/-|:|\.\d+/g, '');
+        let domain = window.location.hostname;
+        let currentTime = new Date().toLocaleString();
+        let elapsedTime = formatTime(getElapsedTime());
 
-        let icalText = `BEGIN:VCALENDAR
-VERSION:2.0
-BEGIN:VEVENT
-DTSTAMP:${formattedStartDate}
-DTSTART:${formattedStartDate}
-DTEND:${formattedEndDate}
-SUMMARY:Timer Event
-END:VEVENT
-END:VCALENDAR`;
+        let title = `${domain} - Elapsed Time: ${elapsedTime}`;
+        let description = `Domain: ${domain}\nDate and Time: ${currentTime}\nStart Time: ${startTimeString}\nElapsed Time: ${elapsedTime}`;
+        let icalData = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//hacksw/handcal//NONSGML v1.0//EN\nBEGIN:VEVENT\nUID:uid1@${domain}\nDTSTAMP:${formatDateToICal(new Date())}\nORGANIZER;CN=Timer App:MAILTO:no-reply@${domain}\nDTSTART:${formatDateToICal(new Date(startTime))}\nDTEND:${formatDateToICal(new Date())}\nSUMMARY:${title}\nDESCRIPTION:${description}\nEND:VEVENT\nEND:VCALENDAR`;
+        let encodedData = encodeURIComponent(icalData);
 
-        let blob = new Blob([icalText], { type: 'text/calendar' });
-        let url = URL.createObjectURL(blob);
-        let a = document.createElement('a');
-        a.href = url;
-        a.download = 'event.ics';
-        a.click();
-        URL.revokeObjectURL(url);
+        let link = document.createElement('a');
+        link.href = `data:text/calendar;charset=utf8,${encodedData}`;
+        link.download = 'event.ics';
+        link.click();
     });
 
     function startTimer() {
         timer = setInterval(() => {
-            elapsedTime++;
+            let elapsedTime = getElapsedTime();
             updateTimerDisplay(elapsedTime);
-            setCookie('timerElapsedTime', elapsedTime, 1);
         }, 1000);
         isRunning = true;
         resetInactivityTimer();
+    }
+
+    function getElapsedTime() {
+        if (!startTime) return 0;
+        return Math.floor((Date.now() - startTime) / 1000);
     }
 
     function updateTimerDisplay(time) {
@@ -122,7 +115,7 @@ END:VCALENDAR`;
         let minutes = Math.floor((time % 3600) / 60);
         let seconds = time % 60;
 
-        timerElement.textContent = 
+        timerElement.textContent =
             String(hours).padStart(2, '0') + ':' +
             String(minutes).padStart(2, '0') + ':' +
             String(seconds).padStart(2, '0');
@@ -134,8 +127,12 @@ END:VCALENDAR`;
         let seconds = time % 60;
 
         return String(hours).padStart(2, '0') + ':' +
-               String(minutes).padStart(2, '0') + ':' +
-               String(seconds).padStart(2, '0');
+            String(minutes).padStart(2, '0') + ':' +
+            String(seconds).padStart(2, '0');
+    }
+
+    function formatDateToICal(date) {
+        return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
     }
 
     function setCookie(name, value, days) {
@@ -145,13 +142,13 @@ END:VCALENDAR`;
             date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
             expires = "; expires=" + date.toUTCString();
         }
-        document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
     }
 
     function getCookie(name) {
         let nameEQ = name + "=";
         let ca = document.cookie.split(';');
-        for(let i = 0; i < ca.length; i++) {
+        for (let i = 0; i < ca.length; i++) {
             let c = ca[i];
             while (c.charAt(0) == ' ') c = c.substring(1, c.length);
             if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
