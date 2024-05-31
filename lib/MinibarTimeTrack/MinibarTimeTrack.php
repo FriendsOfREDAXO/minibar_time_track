@@ -28,14 +28,12 @@ class MinibarTimeTrack extends rex_minibar_element
         }
 
         #minibartimetrack-timer {
-            font-size: 1em;
+            font-family: Courier New;
             cursor: pointer;
         }
 
         #minibartimetrack-reset, #minibartimetrack-copy, #minibartimetrack-calendar {
             background: none;
-            border: none;
-            font-size: 1em;
             cursor: pointer;
         }
 
