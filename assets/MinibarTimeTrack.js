@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     let startTimeString;
     let elapsedTime = 0; // Verstrichene Zeit in Sekunden
     let isRunning = false;
-    let inactivityTime = 300 * 1000; // 10 Sekunden
+    let inactivityTime = 600 * 1000; // 10 Minutes
     let inactivityTimer;
 
     // Lade verstrichene Zeit und Startzeit aus den Cookies
