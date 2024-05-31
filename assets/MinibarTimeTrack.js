@@ -32,7 +32,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
     timerElement.addEventListener('click', () => {
         if (!isRunning) {
             if (!startTimeString) {
-                startTimeString = new Date().toLocaleString();
+                startTime = new Date();
+                startTimeString = startTime.toLocaleString();
                 setCookie('timerStartTimeString', startTimeString, 1);
             }
             setCookie('timerIsRunning', 'true', 1);
@@ -49,7 +50,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
         timer = null;
         isRunning = false;
         elapsedTime = 0;
-        startTimeString = new Date().toLocaleString();
+        startTime = new Date();
+        startTimeString = startTime.toLocaleString();
         updateTimerDisplay(0);
         setCookie('timerElapsedTime', elapsedTime, 1);
         setCookie('timerStartTimeString', startTimeString, 1);
@@ -71,12 +73,38 @@ document.addEventListener('DOMContentLoaded', (event) => {
         timer = null;
         isRunning = false;
         elapsedTime = 0;
-        startTimeString = new Date().toLocaleString();
+        startTime = new Date();
+        startTimeString = startTime.toLocaleString();
         updateTimerDisplay(0);
         setCookie('timerElapsedTime', elapsedTime, 1);
         setCookie('timerStartTimeString', startTimeString, 1);
         setCookie('timerIsRunning', 'false', 1);
         hideMessage();
+    });
+
+    calendarButton.addEventListener('click', () => {
+        let startDate = new Date(startTime);
+        let endDate = new Date(startTime.getTime() + elapsedTime * 1000);
+        let formattedStartDate = startDate.toISOString().replace(/-|:|\.\d+/g, '');
+        let formattedEndDate = endDate.toISOString().replace(/-|:|\.\d+/g, '');
+
+        let icalText = `BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+DTSTAMP:${formattedStartDate}
+DTSTART:${formattedStartDate}
+DTEND:${formattedEndDate}
+SUMMARY:Timer Event
+END:VEVENT
+END:VCALENDAR`;
+
+        let blob = new Blob([icalText], { type: 'text/calendar' });
+        let url = URL.createObjectURL(blob);
+        let a = document.createElement('a');
+        a.href = url;
+        a.download = 'event.ics';
+        a.click();
+        URL.revokeObjectURL(url);
     });
 
     function startTimer() {
