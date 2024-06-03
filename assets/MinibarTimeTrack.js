@@ -87,17 +87,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     calendarButton.addEventListener('click', () => {
         let domain = window.location.hostname;
-        let currentTime = new Date().toISOString();
+        let endTime = new Date();
         let formattedElapsedTime = formatTime(elapsedTime);
 
         let title = `${domain} - Elapsed Time: ${formattedElapsedTime}`;
-        let description = `Domain: ${domain}\nDate and Time: ${currentTime}\nStart Time: ${startTimeString}\nElapsed Time: ${formattedElapsedTime}`;
-        let icalData = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//hacksw/handcal//NONSGML v1.0//EN\nBEGIN:VEVENT\nUID:uid1@${domain}\nDTSTAMP:${formatDateToICal(new Date())}\nORGANIZER;CN=Timer App:MAILTO:no-reply@${domain}\nDTSTART:${formatDateToICal(new Date(startTimeString))}\nDTEND:${formatDateToICal(new Date())}\nSUMMARY:${title}\nDESCRIPTION:${description}\nEND:VEVENT\nEND:VCALENDAR`;
+        let description = `Domain: ${domain}\nStart Time: ${new Date(startTimeString).toLocaleString()}\nEnd Time: ${endTime.toLocaleString()}\nElapsed Time: ${formattedElapsedTime}`;
+        let icalData = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//hacksw/handcal//NONSGML v1.0//EN\nBEGIN:VEVENT\nUID:uid1@${domain}\nDTSTAMP:${formatDateToICal(new Date())}\nORGANIZER;CN=Timer App:MAILTO:no-reply@${domain}\nDTSTART:${formatDateToICal(new Date(startTimeString))}\nDTEND:${formatDateToICal(endTime)}\nSUMMARY:${title}\nDESCRIPTION:${description}\nEND:VEVENT\nEND:VCALENDAR`;
         let encodedData = encodeURIComponent(icalData);
 
         let link = document.createElement('a');
         link.href = `data:text/calendar;charset=utf8,${encodedData}`;
-        link.download = 'event.ics';
+        link.download = `event_${Date.now()}.ics`;
         link.click();
     });
 
