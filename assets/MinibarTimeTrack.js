@@ -64,9 +64,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
     copyButton.addEventListener('click', () => {
         let domain = window.location.hostname;
         let currentTime = new Date().toLocaleString();
+        let endTime = new Date();
         let formattedElapsedTime = formatTime(elapsedTime);
 
-        let copyText = `Domain: ${domain}\nDate and Time: ${currentTime}\nStart Time: ${startTimeString}\nElapsed Time: ${formattedElapsedTime}`;
+        let copyText = `Domain: ${domain}\nDate and Time: ${currentTime}\nStart Time: ${new Date(startTimeString).toLocaleString()}\nEnd Time: ${endTime.toLocaleString()}\nElapsed Time: ${formattedElapsedTime}`;
         navigator.clipboard.writeText(copyText).then(() => {
             alert('Information copied to clipboard');
         });
