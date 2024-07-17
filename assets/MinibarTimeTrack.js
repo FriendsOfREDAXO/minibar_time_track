@@ -1,4 +1,12 @@
 document.addEventListener('DOMContentLoaded', (event) => {
+    initializeTimer();
+});
+
+$(document).on('rex:ready', function (event, container) {
+    initializeTimer();
+});
+
+function initializeTimer() {
     let timerElement = document.getElementById('minibartimetrack-timer');
     let resetButton = document.getElementById('minibartimetrack-reset');
     let copyButton = document.getElementById('minibartimetrack-copy');
@@ -181,4 +189,4 @@ document.addEventListener('DOMContentLoaded', (event) => {
     document.addEventListener('mousemove', resetInactivityTimer);
     document.addEventListener('keypress', resetInactivityTimer);
     document.addEventListener('click', resetInactivityTimer);
-});
+}
